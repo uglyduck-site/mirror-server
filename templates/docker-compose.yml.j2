@@ -31,8 +31,10 @@ services:
       - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.{{ registry.replace('.', '_') }}.rule=Host(`{{ config['domain'] }}`) && PathPrefix(`/{{ registry.replace('.', '_') }}`)"
+      - "traefik.http.routers.{{ registry.replace('.', '_') }}.rule=Host(`{{ config['domain'] }}`) && PathPrefix(`/{{ registry }}`)"
       - "traefik.http.routers.{{ registry.replace('.', '_') }}.entrypoints=websecure"
       - "traefik.http.routers.{{ registry.replace('.', '_') }}.tls.certresolver=myresolver"
+      - "traefik.http.routers.{{ registry.replace('.', '_') }}.middlewares=strip-{{ registry.replace('.', '_') }}"
+      - "traefik.http.middlewares.strip-{{ registry.replace('.', '_') }}.stripPrefix.prefixes=/{{ registry }}"
       - "traefik.http.services.{{ registry.replace('.', '_') }}.loadbalancer.server.port=5000"
 {% endfor %}

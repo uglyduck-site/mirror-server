@@ -3,7 +3,6 @@
 
 # 前置要求
 - `Python`版本 3.8+
-- 安装`certbot`
 - 安装`docker`
 - 安装`docker compose`
 - 一个公网可解析的域名
@@ -21,8 +20,7 @@ python3 main.py
 ```
 输出内容例如：
 ```bash
-Applying SSL certificate...
-SSL certificate for docker.uglyduck.site is already present.
+Checking environment...
 Generating registry server configurations...
 registry-1.docker.io
 docker.elastic.co
