@@ -1,14 +1,25 @@
 services:
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
     restart: always
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email={{ config['email'] }}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/letsencrypt:/letsencrypt"
+      - "./traefik/traefik.yml:/etc/traefik/traefik.yml"
+
 {% for registry in config["registries"] %}
   {{ registry.replace('.', '_') }}:
     image: registry:2.8.3
@@ -17,6 +28,11 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime
       - ./registries/{{ registry }}/data:/var/lib/registry
-      - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml 
+      - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ registry.replace('.', '_') }}.rule=Host(`{{ config['domain'] }}`) && PathPrefix(`/{{ registry.replace('.', '_') }}`)"
+      - "traefik.http.routers.{{ registry.replace('.', '_') }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ registry.replace('.', '_') }}.tls.certresolver=myresolver"
+      - "traefik.http.services.{{ registry.replace('.', '_') }}.loadbalancer.server.port=5000"
 {% endfor %}
-  

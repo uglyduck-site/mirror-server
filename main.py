@@ -78,6 +78,16 @@ def generate_nginx_config(config):
     with open("nginx/conf.d/mirrors.conf", "w") as f:
         f.write(output)
 
+def generate_traefik_config(config):
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template("traefik.yaml.j2")
+    output = template.render(config=config)
+
+    # Write the rendered template to the nginx directory
+    with open("traefik/traefik.yaml", "w") as f:
+        f.write(output)
+
 def generate_docker_compose_config(config):
     # use jinja2 to render the template file, output to docker-compose directory
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -118,8 +128,8 @@ if __name__ == "__main__":
     print_green("Generating registry server configurations...")
     generate_registry_server_configs(config)
 
-    print_green("Generating Nginx configuration...")
-    generate_nginx_config(config)
+    print_green("Generating Traefik configuration...")
+    generate_traefik_config(config)
 
     print_green("Generating Docker Compose configuration...")
     generate_docker_compose_config(config)
