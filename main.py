@@ -4,6 +4,10 @@ import jinja2
 
 def apply_ssl_certificate(config):
     try:
+        # check if cert is already present
+        if subprocess.run(["ls", f"./nginx/ssl/config/live/{config['domain']}/fullchain.pem"], stdout=subprocess.PIPE).returncode == 0:
+            print(f"SSL certificate for {config['domain']} is already present.")
+            return
         # clean up the existing directories
         subprocess.run(["rm", "-rf", "./nginx/ssl/*"])
         domain = config["domain"]
@@ -74,7 +78,7 @@ def generate_docker_compose_config(config):
 def docker_compose_up():
     try:
         # Run docker-compose up
-        subprocess.run(["docker-compose", "up", "-d"], check=True)
+        subprocess.run(["docker", "compose", "up", "-d"], check=True)
         print("Docker Compose has started successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error while starting Docker Compose: {e}")
