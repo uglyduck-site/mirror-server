@@ -10,7 +10,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
 
-{% for registry in registries %}
+{% for registry in config["registries"] %}
   {{ registry }}:
     image: registry:2.8.3
     container_name: {{ registry }}
