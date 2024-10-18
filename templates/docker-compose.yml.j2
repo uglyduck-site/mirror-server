@@ -1,0 +1,23 @@
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+
+{% for registry in registries %}
+  {{ registry }}:
+    image: registry:2.8.3
+    container_name: {{ registry }}
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./registries/{{ registry }}/data:/var/lib/registry
+      - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml    
+{% endfor %}
+  

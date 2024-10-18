@@ -1,0 +1,14 @@
+{
+    "registries": [
+        "registry-1.docker.io",
+        "docker.elastic.co",
+        "gcr.io",
+        "k8s.gcr.io",
+        "quay.io",
+        "nvcr.io",
+        "rocks.canonical.com",
+        "mcr.microsoft.com"
+    ],
+    "domain": "docker.uglyduck.site",
+    "email": "oxy@gmail.com"
+}
