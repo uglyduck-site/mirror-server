@@ -9,6 +9,6 @@
         "rocks.canonical.com",
         "mcr.microsoft.com"
     ],
-    "domain": "docker.uglyduck.site",
-    "email": "oxy@gmail.com"
+    "domain": "mirror.example.com",
+    "email": "example@gmail.com"
 }
