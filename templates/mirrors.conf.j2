@@ -10,7 +10,6 @@ server {
     ssl_prefer_server_ciphers on;
     ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
 
-    # jinja2 模板循环
     {% for registry in registries %}
     location ^~ /{{ registry }}/ {
         proxy_pass http://{{ registry }}:5000/;
@@ -21,7 +20,6 @@ server {
     }
     {% endfor %}
 
-    # 处理所有其他未匹配的请求，避免路径错误
     location / {
         return 404;
     }
