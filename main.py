@@ -32,7 +32,7 @@ def apply_ssl_certificate(config):
 def generate_registry_server_configs(config):
     for registry in config["registries"]:
         # Create directory for the registry
-        subprocess.run(["mkdir", "-p", f'{registry}/data'])
+        subprocess.run(["mkdir", "-p", f'registries/{registry}/data'])
 
         # use jinja2 to render the template file, output to registry directory
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
