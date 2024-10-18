@@ -11,10 +11,6 @@ def check_environment():
     if subprocess.run(["docker", "compose", "version"], stdout=subprocess.PIPE).returncode != 0:
         print("Docker Compose is not installed. Please install Docker Compose.")
         exit(1)
-    # check if certbot is installed
-    if subprocess.run(["certbot", "--version"], stdout=subprocess.PIPE).returncode != 0:
-        print("Certbot is not installed. Please install Certbot.")
-        exit(1)
 
 def apply_ssl_certificate(config):
     try:
@@ -121,9 +117,6 @@ if __name__ == "__main__":
 
     print_green("Checking environment...")
     check_environment()
-    
-    print_green("Applying SSL certificate...")
-    apply_ssl_certificate(config)
 
     print_green("Generating registry server configurations...")
     generate_registry_server_configs(config)
