@@ -2,6 +2,20 @@ import json
 import subprocess
 import jinja2
 
+def check_environment():
+    # check if docker is installed
+    if subprocess.run(["docker", "--version"], stdout=subprocess.PIPE).returncode != 0:
+        print("Docker is not installed. Please install Docker.")
+        exit(1)
+    # check if docker compose is installed
+    if subprocess.run(["docker", "compose", "version"], stdout=subprocess.PIPE).returncode != 0:
+        print("Docker Compose is not installed. Please install Docker Compose.")
+        exit(1)
+    # check if certbot is installed
+    if subprocess.run(["certbot", "--version"], stdout=subprocess.PIPE).returncode != 0:
+        print("Certbot is not installed. Please install Certbot.")
+        exit(1)
+
 def apply_ssl_certificate(config):
     try:
         # check if cert is already present
@@ -95,6 +109,9 @@ if __name__ == "__main__":
     with open("config.json", "r") as f:
         config = json.load(f)
 
+    print_green("Checking environment...")
+    check_environment()
+    
     print_green("Applying SSL certificate...")
     apply_ssl_certificate(config)
 
