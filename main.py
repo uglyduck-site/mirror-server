@@ -4,6 +4,8 @@ import jinja2
 
 def apply_ssl_certificate(config):
     try:
+        # clean up the existing directories
+        subprocess.run(["rm", "-rf", "./nginx/ssl/*"])
         domain = config["domain"]
         email = config["email"]
         # Certbot command to apply for a certificate using standalone mode
@@ -30,7 +32,10 @@ def apply_ssl_certificate(config):
         exit(1)
 
 def generate_registry_server_configs(config):
+    # clean up the existing directories
+    subprocess.run(["rm", "-rf", "./registries/*"])
     for registry in config["registries"]:
+        print(f"{registry}")
         # Create directory for the registry
         subprocess.run(["mkdir", "-p", f'registries/{registry}/data'])
 
@@ -49,7 +54,7 @@ def generate_nginx_config(config):
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template("mirrors.conf.j2")
-    output = template.render(config)
+    output = template.render(config=config)
 
     # Write the rendered template to the nginx directory
     with open("nginx/conf.d/mirrors.conf", "w") as f:
@@ -60,20 +65,44 @@ def generate_docker_compose_config(config):
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template("docker-compose.yml.j2")
-    output = template.render(config)
+    output = template.render(config=config)
 
     # Write the rendered template to the docker-compose directory
     with open("docker-compose.yml", "w") as f:
         f.write(output)
+
+def docker_compose_up():
+    try:
+        # Run docker-compose up
+        subprocess.run(["docker-compose", "up", "-d"], check=True)
+        print("Docker Compose has started successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error while starting Docker Compose: {e}")
+        exit(1)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        exit(1)
+
+def print_green(message):
+    print(f"\033[92m{message}\033[0m")
 
 if __name__ == "__main__":
     # Replace with your domain and email
     with open("config.json", "r") as f:
         config = json.load(f)
 
+    print_green("Applying SSL certificate...")
     apply_ssl_certificate(config)
+
+    print_green("Generating registry server configurations...")
     generate_registry_server_configs(config)
+
+    print_green("Generating Nginx configuration...")
     generate_nginx_config(config)
+
+    print_green("Generating Docker Compose configuration...")
     generate_docker_compose_config(config)
 
+    print_green("Starting Docker Compose...")
+    docker_compose_up()
 

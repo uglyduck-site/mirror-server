@@ -9,15 +9,14 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
-
 {% for registry in config["registries"] %}
-  {{ registry }}:
+  {{ registry.replace('.', '_') }}:
     image: registry:2.8.3
-    container_name: {{ registry }}
+    container_name: {{ registry.replace('.', '_') }}
     restart: always
     volumes:
       - /etc/localtime:/etc/localtime
       - ./registries/{{ registry }}/data:/var/lib/registry
-      - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml    
+      - ./registries/{{ registry }}/config.yml:/etc/docker/registry/config.yml 
 {% endfor %}
   
