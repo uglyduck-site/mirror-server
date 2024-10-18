@@ -5,7 +5,7 @@
 - `Python`版本 3.8+
 - 安装`docker`
 - 安装`docker compose`
-- 一个公网可解析的域名
+- 一个公网可解析的域名.
 
 # 填写配置文件
 在`config.json`中填写必要的配置：
